@@ -1,0 +1,19 @@
+// use prisma-8
+model Module {
+  id           String        @id @onCreate(uuid()) @map("ID_MODULE")
+  parentId     String?       @map("ID_PARENT_MODULE")
+  code         String        @unique(map: "UQ_MODULE_CODE") @map("CODE")
+  name         VarChar(100)  @map("NAME")
+  route        VarChar(200)? @map("ROUTE")
+  icon         VarChar(50)?  @map("ICON")
+  displayOrder Int           @default(0) @map("DISPLAY_ORDER")
+  isActive     Boolean       @default(true) @map("IS_ACTIVE")
+  createdAt    DateTime      @default(now()) @map("CREATED_AT")
+  updatedAt    DateTime      @onCreate(now()) @onUpdate(now()) @map("UPDATED_AT")
+
+  parent       Module?       @relation("ModuleHierarchy", fields: [parentId], references: [id])
+  children     Module[]      @relation("ModuleHierarchy")
+
+  @@index([parentId], map: "IX_MODULE_PARENT")
+  @@map("MODULES")
+}
